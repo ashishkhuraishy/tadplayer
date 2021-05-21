@@ -1,9 +1,12 @@
+import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import 'constants.dart';
+import 'video_page.dart';
 
 class VideoListPage extends StatelessWidget {
   final String albumName;
@@ -31,7 +34,26 @@ class VideoListPage extends StatelessWidget {
         itemBuilder: (context, index) {
           var video = videos[index];
 
-          return VideoWidget(video: video);
+          return GestureDetector(
+            onTap: () async {
+              log('Clicked');
+              var path = await video.relativePath;
+              if (path == null) return;
+
+              var vidPath = '/storage/emulated/0/$path${video.title}';
+              log(vidPath);
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => VideoPlayerPage(
+                    media: vidPath,
+                  ),
+                ),
+              );
+            },
+            child: VideoWidget(video: video),
+          );
         },
       ),
     );
